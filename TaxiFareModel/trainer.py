@@ -1,6 +1,6 @@
 # imports
 from TaxiFareModel.data import get_data, clean_data
-from TaxiFareModel.utils import haversine_vectorized
+from TaxiFareModel.utils import compute_rmse
 from TaxiFareModel.encoders import DistanceTransformer, TimeFeaturesEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.compose import ColumnTransformer
@@ -9,6 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
+import joblib
 
 
 class Trainer():
@@ -47,15 +48,16 @@ class Trainer():
         self.pipeline = pipeline.fit(self.X, self.y)
         return self.pipeline
 
-    def compute_rmse(self, y_pred, y_true):
-        return np.sqrt(((y_pred - y_true)**2).mean())
-
     def evaluate(self, X_test, y_test):
         """evaluates the pipeline on df_test and return the RMSE"""
         y_pred = self.pipeline.predict(X_test)
-        rmse = self.compute_rmse(y_pred, y_test)
+        self.rmse = compute_rmse(y_pred, y_test)
         # print(rmse)
-        return rmse
+        return self.rmse
+
+    def save_model(self):
+        """ Save the trained model into a model.joblib file """
+        joblib.dump(self.pipeline, 'model.joblib')
 
 
 if __name__ == "__main__":
@@ -65,4 +67,14 @@ if __name__ == "__main__":
     # hold out
     # train
     # evaluate
-    print('TODO')
+    N = 10_000
+    df = get_data(nrows=N)
+    df = clean_data(df)
+    y = df["fare_amount"]
+    X = df.drop("fare_amount", axis=1)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    trainer = Trainer(X_train, y_train)
+    trainer.run()
+    print(trainer.evaluate(X_test, y_test))
+    trainer.save_model()
