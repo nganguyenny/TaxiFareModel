@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.egg-info
 .coverage
 .ipynb_checkpoints
@@ -6,3 +7,23 @@ raw_data/
 *.csv
 **/__pycache__/
 .env
+=======
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+
+# Other files and folders
+.settings/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
+>>>>>>> b0fc4634d6b389cbd1dbe8bb81196d56c2ee0f6f
